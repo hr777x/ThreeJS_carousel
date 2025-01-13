@@ -2,6 +2,11 @@ body{
     margin: 0;
 }
 canvas{
-    
+    background-color: aliceblue;
     border: 1px solid black;
+}
+.carousel{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
