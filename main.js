@@ -88,3 +88,19 @@ function loadModels() {
     });
 }
 
+// Function to handle carousel navigation (Prev/Next)
+function changeCarousel(direction) {
+    const carousel = document.querySelector('.carousel');
+    const cardWidth = document.querySelector('.carousel-card').offsetWidth;  // Get card width
+    const newIndex = (currentIndex + direction + models.length) % models.length;  // Calculate the new index
+    carousel.style.transform = `translateX(-${newIndex * (cardWidth + 15)}px)`;  // Move the carousel
+    currentIndex = newIndex;  // Update the current index
+}
+
+// Event listeners for Prev and Next buttons
+document.querySelector('.prev').addEventListener('click', () => changeCarousel(-1));
+document.querySelector('.next').addEventListener('click', () => changeCarousel(1));
+
+// Initialize the carousel cards and models
+createCarouselCards();
+loadModels();
