@@ -1,78 +1,90 @@
-//Importing Three.js library
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'; //used to load 3D models in GLTF format
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'; //used to control the camera
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
+// Array to store the 3D models and corresponding canvases
+const models = [];
+const canvases = [];
+let currentIndex = 0; // Tracks the current model index
 
-//Importing the 3D model
-const headphonesURL = new URL('/models/headphones.glb', import.meta.url);
+// Loading multiple models from URLs
+const modelsURLs = [
+    new URL('/models/headphones.glb', import.meta.url),  // First model
+    new URL('/models/laptop.gltf', import.meta.url),     // Second model
+    new URL('/models/phone.glb', import.meta.url),       // Third model
+    
+];
 
-//Creating a variable to store the 3D model
-let headphonesModel;
-//Creating a scene
-const scene = new THREE.Scene();
+// Get the carousel container element
+const carousel = document.querySelector('.carousel');
 
-//creating a reference for my  canvas
-const myCanvas = document.getElementById('carousel1');
-
-//Creating a light
-const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-
-//setting the light position
-dirLight.position.set(-30, 20, 10);
-
-scene.add(dirLight);
-
-//Creating a camera
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-
-//setting the  camera position
-camera.position.z = 5;
-
-//using orbit controls to control the camera
-const controls = new OrbitControls(camera, myCanvas);
-
-scene.add(controls);
-
-//creating a GLTF loader
+// Creating a loader for GLTF models
 const loader = new GLTFLoader();
 
-//adding an axis helper to the scene
-const axesHelper = new THREE.AxesHelper(5);
+// Creating a scene array to store scenes for each model
+const scenes = [];
 
-scene.add(axesHelper);
+// Function to dynamically create carousel cards and canvases
+function createCarouselCards() {
+    modelsURLs.forEach((url, index) => {
+        // Create a card div
+        const card = document.createElement('div');
+        card.classList.add('carousel-card');
+        
+        // Create a canvas element for each model
+        const canvas = document.createElement('canvas');
+        canvas.classList.add('carousel-canvas');
+        canvas.id = `canvas-${index}`;  // Unique ID for each canvas
 
-//loading a 3D model
-loader.load(headphonesURL.href, function(gltf){
-    headphonesModel = gltf.scene;
-    headphonesModel.position.set(5, 0, -30);
-    scene.add(headphonesModel);
-}, 
-undefined, 
-function(error){
-    console.log(error);
-});
+        // Append the canvas to the card
+        card.appendChild(canvas);
 
-//Creating a renderer
-const renderer = new THREE.WebGLRenderer({antialias: true, canvas: myCanvas, alpha: true});
+        // Append the card to the carousel container
+        carousel.appendChild(card);
+        
+        // Store the canvas reference in the canvases array
+        canvases.push(canvas);
+    });
+}
 
-//Setting the size of the renderer
-renderer.setSize(window.innerWidth, window.innerHeight);
+// Function to load models into their respective scenes and render on canvases
+function loadModels() {
+    modelsURLs.forEach((url, index) => {
+        const canvas = canvases[index];  // Get the corresponding canvas
+        const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true });
+        renderer.setSize(300, 200);  // Set the size of the canvas
 
-// //Adding the renderer to the canvas
-// document.body.appendChild(renderer.domElement);
+        // Create a new scene for each model
+        const scene = new THREE.Scene();
+        scenes.push(scene);
 
+        // Create a camera for each model
+        const camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 1000);
+        camera.position.set(0, 3, 18);  // Set camera position
 
+        // Create a directional light for each model
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+        dirLight.position.set(-25, 20, 10);
+        
+        scene.add(dirLight);
 
-//Adding the renderer to the canvas
-renderer.render(scene, camera);
+        // Load the model into the scene
+        loader.load(url.href, function(gltf) {
+            const model = gltf.scene;
+            scene.add(model);  // Add the model to the scene
+            models.push(model); // Store model references
 
-//Creating a loop to animate the scene(60fps)
-renderer.setAnimationLoop(animate);
+            // Render loop for each canvas
+            function animate(time) {
+                model.rotation.y = time / 1000;  // Rotate model continuously
+                renderer.render(scene, camera);
+            }
 
-//any code that is written in the animate function will be called on every frame
-function animate(time){
-    // headphonesModel.rotation.y = time * 0.001;
-    renderer.render(scene, camera);
+            // Set animation loop for each canvas
+            renderer.setAnimationLoop(animate);
+
+        }, undefined, function(error) {
+            console.error(error);
+        });
+    });
 }
 

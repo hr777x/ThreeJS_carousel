@@ -6,22 +6,15 @@
     <title>JDI Test - 3D Carousels</title>
     <link rel="stylesheet" href="./style.css">
 </head>
-<body>
-    <script type="module" src="./main.js"></script>
-    <div class="container">
-        <div class="carousel">
-            <div class="carousel__item">
-                <canvas id="carousel1" height="80px" width="80px"></canvas>
-            </div>
-            <div class="carousel__item">
-                <canvas id="carousel2"></canvas>
-            </div>
-            <div class="carousel__item">
-                <canvas id="carousel3"></canvas>
-            </div>
+    <body>
+        <div class="carousel-container">
+            <div class="carousel"></div>
+            <!-- Canvas elements will be added dynamically here -->
+            <button class="prev">Prev</button>
+            <button class="next">Next</button>
         </div>
-    </div>
     
-    
-</body>
+        <script type="module" src="./main.js"></script>
+
+    </body>
 </html>
