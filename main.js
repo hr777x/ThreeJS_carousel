@@ -1,16 +1,16 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-// Array to store the 3D models and corresponding canvases
+// Arrays to store the 3D models and corresponding canvases
 const models = [];
 const canvases = [];
-let currentIndex = 0; // Tracks the current model index
+let currentIndex = 0; // current index of the carousel
 
 // Loading multiple models from URLs
 const modelsURLs = [
-    new URL('/models/headphones.glb', import.meta.url),  // First model
-    new URL('/models/laptop.gltf', import.meta.url),     // Second model
-    new URL('/models/phone.glb', import.meta.url),       // Third model
+    new URL('/models/apple.glb', import.meta.url),
+    new URL('/models/grapes.glb', import.meta.url),     
+    new URL('/models/pizza.glb', import.meta.url),       
     
 ];
 
@@ -51,7 +51,7 @@ function loadModels() {
     modelsURLs.forEach((url, index) => {
         const canvas = canvases[index];  // Get the corresponding canvas
         const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true });
-        renderer.setSize(300, 200);  // Set the size of the canvas
+        renderer.setSize(250, 250);  // Set the size of the canvas
 
         // Create a new scene for each model
         const scene = new THREE.Scene();
@@ -59,7 +59,7 @@ function loadModels() {
 
         // Create a camera for each model
         const camera = new THREE.PerspectiveCamera(45, canvas.width / canvas.height, 0.1, 1000);
-        camera.position.set(0, 3, 18);  // Set camera position
+        camera.position.set(0, 1.25, 7.5);  // Set camera position
 
         // Create a directional light for each model
         const dirLight = new THREE.DirectionalLight(0xffffff, 2);
@@ -90,11 +90,21 @@ function loadModels() {
 
 // Function to handle carousel navigation (Prev/Next)
 function changeCarousel(direction) {
-    const carousel = document.querySelector('.carousel');
     const cardWidth = document.querySelector('.carousel-card').offsetWidth;  // Get card width
-    const newIndex = (currentIndex + direction + models.length) % models.length;  // Calculate the new index
-    carousel.style.transform = `translateX(-${newIndex * (cardWidth + 15)}px)`;  // Move the carousel
-    currentIndex = newIndex;  // Update the current index
+    const carouselWidth = carousel.offsetWidth;  // Get carousel width
+    const cardSpacing = 15;  // The gap between cards, you may adjust this value as needed
+
+    // Calculate the new index based on direction
+    const newIndex = (currentIndex + direction + models.length) % models.length;
+    
+    // Calculate the center offset (move carousel so the new card is centered)
+    const newPosition = -newIndex * (cardWidth + cardSpacing) + (carouselWidth - cardWidth) / 2;
+
+    // Move the carousel to the new position
+    carousel.style.transform = `translateX(${newPosition}px)`;  
+
+    // Update the current index
+    currentIndex = newIndex;  
 }
 
 // Event listeners for Prev and Next buttons
