@@ -31,9 +31,9 @@ const carousel = document.querySelector('.carousel');
 // Function to dynamically create carousel cards and canvases
 function createCarouselCards() {
    
+    const maxScenes  = Math.min(modelsURLs.length, 20); // Maximum number of cards to display
 
-
-    for( i = 0; i < modelsURLs.length; i++) {
+    for( i = 0; i < maxScenes; i++) {
         const scene = new THREE.Scene();
         console.log(scene.userData);
 
