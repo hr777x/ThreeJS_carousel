@@ -28,10 +28,10 @@ canvas = document.querySelector('#canvas');
 // Get the carousel container element
 const carousel = document.querySelector('.carousel'); 
 
-// Function to dynamically create carousel cards and canvases
+// Function to dynamically create carousel cards and scenes
 function createCarouselCards() {
    
-    const maxScenes  = Math.min(modelsURLs.length, 20); // Maximum number of cards to display
+    const maxScenes  = Math.min(modelsURLs.length, 20); // display all the models referenced in the modelsURLs array or 20 models, whichever is less
 
     for( i = 0; i < maxScenes; i++) {
         const scene = new THREE.Scene();
@@ -162,31 +162,25 @@ function createCarouselCards() {
 
 // Function to handle carousel navigation (Prev/Next)
 function changeCarousel(direction) {
-    const cards = document.querySelectorAll('.carousel-card'); // Get all carousel cards
-    const cardWidth = cards[0].offsetWidth; // Width of a single card
-    const cardSpacing = parseFloat(window.getComputedStyle(cards[0]).marginRight) || 15; // Margin between cards
-    const totalCards = cards.length;
+    const cardWidth = document.querySelector('.carousel-card').offsetWidth;  // Get card width
+    const carouselWidth = carousel.offsetWidth;  // Get carousel width
+    const totalCards = carousel.querySelectorAll('.carousel-card').length;  // Total cards in carousel
+    const cardSpacing = 15;  // The gap between cards (adjust if needed)
 
-    // Calculate the new index based on the direction
-    i = (i + direction + totalCards) % totalCards;
+    // Calculate the new index
+    const newIndex = (i + direction + totalCards) % totalCards;
 
-    // Calculate the total carousel width
-    const carouselWidth = cardWidth * totalCards + cardSpacing * (totalCards - 1);
+    // Calculate the new position for centering the current card
+    const newPosition = -newIndex * (cardWidth + cardSpacing) + (carouselWidth - cardWidth) / 2;
 
-    // Calculate the position to center the active card
-    const newPosition = -i * (cardWidth + cardSpacing) + (carousel.offsetWidth - cardWidth) / 2;
+    // Apply the transform with smooth transition
+    carousel.style.transition = 'transform 0.5s ease';  // Smooth transition
+    carousel.style.transform = `translateX(${newPosition}px)`;  
 
-    // Clamp the new position to avoid over-scrolling
-    const maxScrollPosition = 0; // Maximum (leftmost) scroll
-    const minScrollPosition = -(carouselWidth - carousel.offsetWidth); // Minimum (rightmost) scroll
-    const finalPosition = Math.min(Math.max(newPosition, minScrollPosition), maxScrollPosition);
-
-    // Apply the new transform to center the active card
-    carousel.style.transform = `translateX(${finalPosition}px)`;
-    carousel.style.transition = 'transform 0.5s ease'; // Smooth scrolling
-
-    console.log(`Active Card Index: ${i}`);
+    // Update the current index
+    i = newIndex;  
 }
+
 
 // Event listeners for Prev and Next buttons
 document.querySelector('.prev').addEventListener('click', () => changeCarousel(-1));
