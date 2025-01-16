@@ -28,8 +28,6 @@ h2{
     align-items: center;
 }
 
-
-
 #canvas {
     position: absolute;
     top: 0;
@@ -41,7 +39,7 @@ h2{
 /* Canvas inside the card */
 .carousel-canvas {
     position: relative;
-    width: 100%;
+    width: 90%;
     height: 200px;
 }
 
@@ -49,7 +47,7 @@ h2{
 button {
     position: absolute;
     top: 40%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.35);
     color: white;
     border: none;
     padding: 10px 15px;
@@ -60,15 +58,15 @@ button {
 }
 
 button.prev {
-    left: 10px;
+    left: 57px;
 }
 
 button.next {
-    right: 10px;
+    right: 50px;
 }
 
 button:hover {
-    background-color: greenyellow;
+    background-color: orange;
 }
 /* Pop-up styling */
 .popup {

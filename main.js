@@ -241,3 +241,10 @@ canvasdiv.forEach((card, index) => {
 
     });
 });
+
+// Close pop-up when clicking outside the content
+popup.addEventListener("click", (e) => {
+    if (e.target === popup) {
+      hidePopup();
+    }
+  });
