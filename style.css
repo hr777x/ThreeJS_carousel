@@ -34,7 +34,7 @@ h2{
     width: 100vw;
     height: 100vh;
     z-index: -1; /* Ensure it's behind other elements */
-    pointer-events: none; /* Prevent interference with user interaction */
+    pointer-events: none; /*Prevent interference with user interaction*/
 }
 /* Canvas inside the card */
 .carousel-canvas {

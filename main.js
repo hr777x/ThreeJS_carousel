@@ -6,7 +6,7 @@ let i; // current index of the carousel
 
 let canvas;  // Reference to the current canvas
 
-let renderer;
+let renderer;  // Reference to the renderer
 
 // Creating a scene array to store scenes for each model
 const scenes = [];
@@ -19,7 +19,7 @@ const modelsURLs = [
     
 ];
 
-// Hardcoded product details
+// Hardcoded product details in an array of objects
 const productDetails = [
     {title: "Apple", description: "Fresh and juicy apples." },
     {title: "Grapes", description: "Sweet and seedless grapes." },
@@ -69,10 +69,16 @@ function createCarouselCards() {
         
 
         // Create a directional light for each model
-        const dirLight = new THREE.DirectionalLight(0xffffff, 2);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 3);
         dirLight.position.set(-25, 20, 10);
-        
+
         scene.add(dirLight);
+
+        const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+        pointLight.position.set(0, 0, 0); // Set the position of the light
+        
+        scene.add(pointLight);
+
 
         loader.load(
             modelsURLs[i % modelsURLs.length].href, // Load models cyclically
@@ -96,14 +102,15 @@ function createCarouselCards() {
  renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true });
  // Start the animation loop
     renderer.setAnimationLoop(animate);
+    // Set the pixel ratio of the canvas for better rendering
     renderer.setPixelRatio( window.devicePixelRatio );
 
     
     function updateSize() {
-
+        // Get the canvas' display size
         const width = canvas.clientWidth;
         const height = canvas.clientHeight;
-
+        // Check if the canvas is not the same size
         if ( canvas.width !== width || canvas.height !== height ) {
 
             renderer.setSize( width, height, false );
@@ -116,12 +123,29 @@ function createCarouselCards() {
  function animate(time) {
     updateSize();
 
-    renderer.setClearColor( 0xffffff );
-	renderer.setScissorTest( false );
-	renderer.clear();
+    // Set the background color of the renderer to white (hex: #ffffff)
+// This is the color used to clear the entire canvas initially.
+renderer.setClearColor(0xffffff);
 
-	renderer.setClearColor( 0xe0e0e0 );
-	renderer.setScissorTest( true );
+// Disable the scissor test temporarily.
+// When the scissor test is off, the renderer can clear the entire canvas without restrictions.
+renderer.setScissorTest(false);
+
+// Clear the entire canvas using the current clear color (white).
+// This ensures no previous frame's content remains on the canvas.
+renderer.clear();
+
+// Set the background color of the renderer to light gray (hex: #e0e0e0).
+// This new color will be used as the background for subsequent rendering operations.
+// It provides a subtle contrast for rendering specific sections of the canvas.
+renderer.setClearColor(0xe0e0e0);
+
+// Re-enable the scissor test.
+// The scissor test restricts rendering to specific rectangular regions of the canvas.
+// This is particularly useful for rendering scenes or objects into separate areas,
+// such as individual carousel cards, without affecting the rest of the canvas.
+renderer.setScissorTest(true);
+
 
     // Loop through each scene
     scenes.forEach((scene) => {
@@ -153,13 +177,15 @@ function createCarouselCards() {
         const height = rect.bottom - rect.top;
         const left = rect.left;
         const bottom = renderer.domElement.clientHeight - rect.bottom;
-
+            // set the viewport for the current element
         renderer.setViewport(left, bottom, width, height);
+            // set the scissor for the current element(scissor is used to clip the scene to the size of the element)
         renderer.setScissor(left, bottom, width, height);
 
         // Update the camera aspect ratio
         const camera = scene.userData.camera;
         camera.aspect = width / height;
+        //after the change in the properties of the camera, we need to update the projection matrix(aspect ratio in this case)
         camera.updateProjectionMatrix();
 
         // Render the scene
@@ -171,8 +197,8 @@ function createCarouselCards() {
 // Function to handle carousel navigation (Prev/Next)
 function changeCarousel(direction) {
     const cardWidth = document.querySelector('.carousel-card').offsetWidth;  // Get card width
-    const carouselWidth = carousel.offsetWidth;  // Get carousel width
-    const totalCards = carousel.querySelectorAll('.carousel-card').length;  // Total cards in carousel
+    const carouselWidth = carousel.offsetWidth;                              // Get carousel width
+    const totalCards = carousel.querySelectorAll('.carousel-card').length;   // Total cards in carousel
     const cardSpacing = 15;  // The gap between cards (adjust if needed)
 
     // Calculate the new index
@@ -190,12 +216,12 @@ function changeCarousel(direction) {
 }
 
 
-// Event listeners for Prev and Next buttons
-document.querySelector('.prev').addEventListener('click', () => changeCarousel(-1));
-document.querySelector('.next').addEventListener('click', () => changeCarousel(1));
-
 // Initialize the carousel cards and models
 createCarouselCards();
+
+// Get the prev and next buttons
+const prevButton = document.querySelector('.prev');
+const nextButton = document.querySelector('.next');
 
 // Get pop-up elements
 const canvasdiv = document.querySelectorAll('.carousel-card');
@@ -203,6 +229,10 @@ const popup = document.getElementById("popup");
 const popupTitle = document.getElementById("popup-title");
 const popupDescription = document.getElementById("popup-description");
 const closePopup = document.getElementById("close-popup");
+
+// Event listeners for Prev and Next buttons
+prevButton.addEventListener('click', () => changeCarousel(-1));
+nextButton.addEventListener('click', () => changeCarousel(1));
 
 // Function to show the pop-up
 function showPopup(product) {
@@ -225,18 +255,12 @@ canvasdiv.forEach((card, index) => {
         console.log('clicked')
         if(index === 0){
             showPopup(productDetails[index]);
-            popupTitle.innerHTML = productDetails[index].title;
-            popupDescription.innerHTML = productDetails[0].description;
         }   
         else if(index === 1){
             showPopup(productDetails[index]);
-            popupTitle.innerHTML = productDetails[index].title;
-            popupDescription.innerHTML = productDetails[1].description;
         }
         else if(index === 2){
             showPopup(productDetails[index]);
-            popupTitle.innerHTML = productDetails[index].title;
-            popupDescription.innerHTML = productDetails[2].description;
         }
 
     });
