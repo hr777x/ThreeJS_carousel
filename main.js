@@ -19,6 +19,13 @@ const modelsURLs = [
     
 ];
 
+// Hardcoded product details
+const productDetails = [
+    {title: "Apple", description: "Fresh and juicy apples." },
+    {title: "Grapes", description: "Sweet and seedless grapes." },
+    {title: "Pizza", description: "Delicious cheese pizza." }
+  ];
+
 // Creating a loader for GLTF models
 const loader = new GLTFLoader();
 
@@ -35,7 +42,6 @@ function createCarouselCards() {
 
     for( i = 0; i < maxScenes; i++) {
         const scene = new THREE.Scene();
-        console.log(scene.userData);
 
         // Create a new element for each model
         const element = document.createElement('div');
@@ -90,8 +96,8 @@ function createCarouselCards() {
  renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas, alpha: true });
  // Start the animation loop
     renderer.setAnimationLoop(animate);
-    renderer.setClearColor( 0xffffff, 1 );
     renderer.setPixelRatio( window.devicePixelRatio );
+
     
     function updateSize() {
 
@@ -130,14 +136,16 @@ function createCarouselCards() {
 
         // Get the div associated with this scene
         const element = scene.userData.element;
+
+        // Get the size of the element and its position relative to the viewport
         const rect = element.getBoundingClientRect();
 
        // check if it's offscreen. If so skip it
-				if ( rect.bottom < 0 || rect.top > renderer.domElement.clientHeight ||
-                        rect.right < 0 || rect.left > renderer.domElement.clientWidth ) {
+		if ( rect.bottom < 0 || rect.top > renderer.domElement.clientHeight ||
+             rect.right < 0 || rect.left > renderer.domElement.clientWidth ) {
 
-                       return; // it's off screen
-                    }
+                return; // it's off screen
+            }
 
 
         // Set the renderer's viewport to match the div's position and size
@@ -188,3 +196,48 @@ document.querySelector('.next').addEventListener('click', () => changeCarousel(1
 
 // Initialize the carousel cards and models
 createCarouselCards();
+
+// Get pop-up elements
+const canvasdiv = document.querySelectorAll('.carousel-card');
+const popup = document.getElementById("popup");
+const popupTitle = document.getElementById("popup-title");
+const popupDescription = document.getElementById("popup-description");
+const closePopup = document.getElementById("close-popup");
+
+// Function to show the pop-up
+function showPopup(product) {
+    popupTitle.textContent = product.title;
+    popupDescription.textContent = product.description;
+    popup.classList.remove("hidden");
+  }
+
+  // Function to close the pop-up
+function hidePopup() {
+    popup.classList.add("hidden");
+  }
+//onclick event listener for the close button
+closePopup.addEventListener("click", hidePopup);
+
+//onclick event listener for all the carousel cards
+canvasdiv.forEach((card, index) => {
+    card.addEventListener('click',() => {
+        //show the index of the div clicked
+        console.log('clicked')
+        if(index === 0){
+            showPopup(productDetails[index]);
+            popupTitle.innerHTML = productDetails[index].title;
+            popupDescription.innerHTML = productDetails[0].description;
+        }   
+        else if(index === 1){
+            showPopup(productDetails[index]);
+            popupTitle.innerHTML = productDetails[index].title;
+            popupDescription.innerHTML = productDetails[1].description;
+        }
+        else if(index === 2){
+            showPopup(productDetails[index]);
+            popupTitle.innerHTML = productDetails[index].title;
+            popupDescription.innerHTML = productDetails[2].description;
+        }
+
+    });
+});
