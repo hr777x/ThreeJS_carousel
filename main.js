@@ -58,8 +58,6 @@ function createCarouselCards() {
         // Append the card to the carousel container
         carousel.appendChild(element);
      
-        // Append the card to the carousel container
-        carousel.appendChild(element);
         
         // Create a camera for each model
         const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
@@ -150,10 +148,10 @@ renderer.setScissorTest(true);
     // Loop through each scene
     scenes.forEach((scene) => {
 
-        // Rotate all models in the scene
+        // Rotate all models in the scene and traverse through each child
         scene.traverse((child) => {
             if (child.isMesh) {
-                child.rotation.y = time / 1000; // Adjust speed as needed
+                child.rotation.y = time / 1000; // Rotate the model
             }
         });
         
